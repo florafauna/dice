@@ -16,11 +16,6 @@ In R start game with `source('diceShiny.R')`.
 
 ### To do:
 
-- roll dice by pressing on dice in stead if buttons.
+- roll dice by pressing on dice in stead of buttons.
 - game is no working jet :-)
-- add score counter 
-
-
-
-
-
+- add score counter
