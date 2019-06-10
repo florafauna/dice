@@ -8,32 +8,8 @@ library(png)
 ## load images
 camel <- readPNG("camel.png" )
 uniquehorn <- readPNG("uniquehorn.png" )
-frog <- readPNG("frog.png" )
-
-## a new Grob class for dynamic scaling of text size ---
-resizingTextGrob <- function(...){
-  grob(tg=textGrob(...), cl="resizingTextGrob")
-}
-
-drawDetails.resizingTextGrob <- function(x, recording=TRUE)
-{
-  grid.draw(x$tg)
-}
-preDrawDetails.resizingTextGrob <- function(x)
-{
-  h <- convertWidth(unit(1, "npc"), "mm", valueOnly=TRUE)
-  fs <- rescale(h, to=c(40, 4), from=c(150, 10))
-  pushViewport(viewport(gp = gpar(fontsize = 4*fs)))
-}
-postDrawDetails.resizingTextGrob  <- function(x) popViewport()
-
-## ## some tests ---------------------------
-## dev.new(width=4, height=4, unit="in")
-## grid.newpage()
-## g <- resizingTextGrob(label="test 1")
-## grid.draw(g)
-## ## resize plot window (width) with mouse for dynamic text scaling
-## dev.off()
+frog <- readPNG("frog.png")
+nos <- lapply(1:9, function(i) readPNG(paste0(i,".png")))
 
 ## The game in one ------------------------------------
 ## note the use of the lexical scoping ;-)
@@ -123,8 +99,9 @@ board <- function(){
                 grid.rect(gp=gpar(fill=alpha(cols[i], .7)))
             else{
                 grid.rect()
-                g <- resizingTextGrob(label=i)
-                grid.draw(g)
+                pushViewport(viewport(width=unit(.95, "npc"), height=unit(.95, "npc")))
+                grid.raster(nos[[i]])
+                popViewport()
             }
             popViewport()
         }
@@ -259,13 +236,13 @@ $(document).on("keyup", function(e) {
     br(),
     br(),
     radioButtons("choice", "\nChoose one:",
-                 choices = c("Both"=1, 
+                 choices = c("both"=1, 
                              "sum (+)" = 2,
                              "difference (-)" = 3,
                              "only one" = 4,
                              "none" = 5),
                  selected = 1, inline=TRUE),
-    textInput("txtIn", label = "", placeholder = "")
+    textInput("txtIn", label = "Give 0, 1, or 2 number(s) and press [enter]:", placeholder = "")
 )
 
 server <- function(input, output, session) {
